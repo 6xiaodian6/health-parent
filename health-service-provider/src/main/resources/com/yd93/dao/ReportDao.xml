@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd93.dao.ReportDao">
+
+    <select id="getMemberReport" resultType="java.util.Map">
+        SELECT date_format(regTime,"%Y-%m") months, count(id) memberCount
+                FROM t_member GROUP BY date_format(regTime,"%Y-%m")
+    </select>
+    <select id="getSetmealReport" resultType="java.util.Map">
+        SELECT s.name,count(s.name) value
+            FROM t_order o INNER JOIN
+            t_setmeal s ON o.setmeal_id = s.id GROUP BY s.name
+    </select>
+    <select id="getMemberCount" resultType="java.lang.Integer">
+        SELECT count(1) FROM t_member
+        <if test="value != null">
+            WHERE regTime BETWEEN #{value} AND now();
+        </if>
+    </select>
+    <select id="getOrderCount" resultType="java.lang.Integer">
+        SELECT count(1) FROM t_order
+        <if test="value!=null">
+            WHERE orderDate BETWEEN #{value} AND now()
+        </if>
+    </select>
+
+    <select id="getHotSetmeal" resultType="java.util.Map">
+        SELECT t.name name, count(1) setmeal_count, count(1) / (SELECT count(*) FROM t_order) proportion,t.remark
+        FROM t_setmeal t
+               INNER JOIN t_order t2 ON t.id = t2.setmeal_id
+        GROUP BY t.name,t.remark
+    </select>
+    <select id="getVisitsNumber" resultType="java.lang.Integer">
+        SELECT count(1) FROM t_order  WHERE orderStatus = '已到诊'
+        <if test="value!=null">
+           AND orderDate BETWEEN #{value} AND now()
+        </if>
+    </select>
+</mapper>

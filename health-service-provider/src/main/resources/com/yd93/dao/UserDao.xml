@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd93.dao.UserDao">
+<resultMap id="user" type="com.yd93.pojo.User">
+    <id column="uId" property="id"/>
+    <result column="birthday" property="birthday"/>
+    <result column="gender" property="gender"/>
+    <result column="username" property="username"/>
+    <result column="password" property="password"/>
+    <result column="remark" property="remark"/>
+    <result column="station" property="station"/>
+    <result column="telephone" property="telephone"/>
+    <collection property="roles" ofType="com.yd93.pojo.Role">
+        <id column="rId" property="id"/>
+        <result column="rName" property="name"/>
+        <result column="rKeyword" property="keyword"/>
+        <result column="rDescription" property="description"/>
+        <collection property="permissions" ofType="com.yd93.pojo.Permission">
+            <id column="pId" property="id"/>
+            <result column="pName" property="name"/>
+            <result column="pKeyword" property="keyword"/>
+            <result column="pDescription" property="description"/>
+        </collection>
+    </collection>
+</resultMap>
+    <select id="findByUsername" resultMap="user">
+        SELECT u.id uId,u.birthday,u.gender,u.username,u.password,u.remark,u.station,u.telephone,
+               r.id rId,r.name rName,r.keyword rKeyword,r.description rDescription,
+               p.id pId,p.name pName,p.keyword pKeyword,p.description pDescription
+        FROM t_user u
+               LEFT JOIN t_user_role t ON u.id = t.user_id
+               LEFT JOIN t_role r ON t.role_id = r.id
+               LEFT JOIN t_role_permission rp ON r.id = rp.role_id
+               LEFT JOIN t_permission p ON rp.permission_id = p.id
+        WHERE u.username=#{username}
+    </select>
+</mapper>

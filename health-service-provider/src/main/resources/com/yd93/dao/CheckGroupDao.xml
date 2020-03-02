@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd93.dao.CheckGroupDao">
+    <select id="findCheckItem" resultType="com.yd93.pojo.CheckItem">
+        SELECT * FROM t_checkitem
+    </select>
+    <select id="findCheckGroupByCodeAndName" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_checkgroup
+        WHERE code=#{code} or name=#{name}
+    </select>
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_checkgroup (code, name, helpCode, sex, remark, attention)
+        VALUES (#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
+    </insert>
+    <insert id="addGroupAndItem">
+        INSERT INTO t_checkgroup_checkitem(checkgroup_id,checkitem_id) VALUES (#{checkGroupId},#{checkItemId})
+    </insert>
+    <!--自定义一个返回结果值，将检查项集合封装进去，需要通过中间表执行，即把多的一方属性写在collection里面，然后主键对应关联表的查询列名-->
+    <resultMap id="checkGroup" type="com.yd93.pojo.CheckGroup">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="helpCode" column="helpCode"/>
+        <result property="sex" column="sex"/>
+        <result property="remark" column="remark"/>
+        <result property="attention" column="attention"/>
+        <collection property="checkItems" column="gId" ofType="com.yd93.pojo.CheckItem">
+            <id property="id" column="cid"/>
+            <!--  <result property="code" column="ccode"/>
+              <result property="name" column="cname"/>
+              <result property="sex" column="csex"/>
+              <result property="age" column="cage"/>
+              <result property="price" column="cprice"/>
+              <result property="type" column="ctype"/>
+              <result property="attention" column="cattention"/>
+              <result property="remark" column="cremark"/>-->
+        </collection>
+    </resultMap>
+    <select id="findPage" resultMap="checkGroup">
+        SELECT g.id id, g.code code,g.name name,g.helpCode helpCode,g.sex sex,g.remark remark,g.attention attention,
+        group_concat(c.id) cid
+        FROM t_checkgroup g
+        LEFT JOIN t_checkgroup_checkitem gc ON g.id=gc.checkgroup_id
+        LEFT JOIN t_checkitem c ON gc.checkitem_id=c.id
+        <where>
+            <if test="value != null">
+                g.code LIKE #{value} or g.name LIKE #{value} or g.helpCode LIKE #{value}
+            </if>
+        </where>
+        GROUP BY g.id
+    </select>
+    <select id="findCheckGroupByCode" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_checkgroup
+        WHERE code!=#{code} and name=#{name}
+    </select>
+    <update id="edit">
+        UPDATE t_checkgroup
+        <set>
+            <if test="name!=null">
+                name=#{name}
+            </if>
+            <if test="helpCode!=null">
+                helpCode=#{helpCode}
+            </if>
+            <if test="sex!=null">
+                sex=#{sex}
+            </if>
+            <if test="remark!=null">
+                remark=#{remark}
+            </if>
+            <if test="attention">
+                attention=#{attention}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+    <delete id="delGroup">
+        DELETE FROM t_checkgroup WHERE id=#{checkGroupId}
+    </delete>
+</mapper>

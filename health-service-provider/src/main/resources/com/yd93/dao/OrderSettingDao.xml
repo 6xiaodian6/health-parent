@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd93.dao.OrderSettingDao">
+    <insert id="add">
+        INSERT INTO t_ordersetting(orderDate, number,reservations)  VALUES (#{orderDate},#{number},#{reservations})
+    </insert>
+    <update id="update">
+        UPDATE t_ordersetting SET number=#{number} WHERE orderDate=#{orderDate}
+    </update>
+    <update id="updateOrder">
+        UPDATE t_ordersetting SET number=#{number} WHERE orderDate=#{orderDate}
+    </update>
+    <!--更新已预约人数-->
+    <update id="editReservationsByOrderDate" parameterType="com.yd93.pojo.OrderSetting">
+        update t_ordersetting set reservations = #{reservations} where orderDate = #{orderDate}
+    </update>
+    <select id="findByDate" resultType="java.lang.Integer">
+        SELECT COUNT(*) from t_ordersetting WHERE orderDate=#{orderDate}
+    </select>
+    <!--不写参数类型直接进行参数的传递，是不会获取参数成功的，也就是说想要直接获取参数参数成功有两种方式
+            1.在dao里面直接使用@Param注解指定传入的参数
+            2.在mapper文件中指定参数类型 -->
+    <select id="findOrder" resultType="map">
+        SELECT id,date_format(orderDate,"%e") date,number number,reservations reservations  FROM t_ordersetting WHERE date_format(orderDate,"%Y-%c")=#{orderDate}
+    </select>
+    <!--根据日期查询预约设置信息-->
+    <select id="findByOrderDate" parameterType="date" resultType="com.yd93.pojo.OrderSetting">
+        select * from t_ordersetting where orderDate = #{orderDate}
+    </select>
+</mapper>

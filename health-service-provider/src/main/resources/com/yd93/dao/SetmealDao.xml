@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd93.dao.SetmealDao">
+    <!--mapper文件默认的就是插入在最前面，然后是查询-->
+    <insert id="addGroup">
+        INSERT INTO t_setmeal_checkgroup VALUES (#{id},#{checkGroupId})
+    </insert>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_setmeal(name, code, helpCode, sex, age, price, remark, attention, img)
+        VALUES (#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img})
+    </insert>
+
+    <select id="findPage" resultType="com.yd93.pojo.Setmeal">
+        SELECT * FROM t_setmeal
+    </select>
+
+    <select id="findCodeAndName" resultType="java.lang.Integer">
+        SELECT count(*) FROM t_setmeal WHERE code=#{setmealCode} or name=#{setmealName}
+    </select>
+
+    <select id="findGroup" resultType="com.yd93.pojo.CheckGroup">
+        SELECT * FROM t_checkgroup
+    </select>
+    <select id="getSetmeal" resultType="com.yd93.pojo.Setmeal">
+        SELECT * FROM t_setmeal
+    </select>
+    <resultMap id="setmeal" type="com.yd93.pojo.Setmeal">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="helpCode" column="helpCode"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="price" column="price"/>
+        <result property="remark" column="remark"/>
+        <result property="attention" column="attention"/>
+        <result property="img" column="img"/>
+        <collection property="checkGroups" column="tgId" ofType="com.yd93.pojo.CheckGroup">
+            <id column="tgId" property="id"/>
+            <result property="name" column="tgName"/>
+            <result column="tgRemark" property="remark"/>
+            <collection property="checkItems" column="tcId" ofType="com.yd93.pojo.CheckItem">
+                <id column="tcId" property="id"/>
+                <result property="name" column="tcName"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="findById" resultMap="setmeal">
+        SELECT ts.*,tg.id tgId, tg.name tgName, tg.remark tgRemark,tc.id tcId, tc.name tcName
+        FROM t_setmeal ts
+               LEFT JOIN t_setmeal_checkgroup tsc ON ts.id = tsc.setmeal_id
+               LEFT JOIN t_checkgroup tg ON tsc.checkgroup_id = tg.id
+               LEFT JOIN t_checkgroup_checkitem tcc ON tg.id = tcc.checkgroup_id
+               LEFT JOIN t_checkitem tc ON tcc.checkitem_id = tc.id
+        WHERE ts.id=#{id}
+    </select>
+    <select id="findSetmealById" resultType="com.yd93.pojo.Setmeal">
+        SELECT * FROM t_setmeal WHERE id=#{id}
+    </select>
+</mapper>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+							http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+    <!--配置数据源-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <!-- 这里的useAffectedRows=true是设置获取插入和更新操作 所影响的行数，如果不加返回的行数在mybatis中就会有问题-->
+        <property name="url" value="jdbc:mysql://192.168.67.74:3306/health?useAffectedRows=true"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+    <!--spring和mybatis整合工厂-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!--<property name="configLocation" value="classpath:SqlMapConfig.xml"/>-->
+        <property name="plugins">
+           <array>
+               <bean class="com.github.pagehelper.PageHelper">
+                   <property name="properties">
+                       <value>
+                           helperDialect=mysql
+                       </value>
+                   </property>
+               </bean>
+           </array>
+        </property>
+    </bean>
+    <!--mapper映射文件扫描-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.yd93.dao"/>
+    </bean>
+</beans>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd93.dao.OrderSettingListDao">
+    <!--不写参数类型直接进行参数的传递，是不会获取参数成功的，也就是说想要直接获取参数参数成功有两种方式
+            1.在dao里面直接使用@Param注解指定传入的参数
+            2.在mapper文件中指定参数类型 -->
+    <!--根据日期查询预约设置信息-->
+    <select id="findOrderSetting" parameterType="string" resultType="com.yd93.pojo.OrderSetting">
+        select * from t_ordersetting where orderDate like #{date} order by orderDate desc
+    </select>
+</mapper>
