@@ -1,6 +1,9 @@
 # health-parent项目简介
 
 > 此项目为用户提供手机预约体检服务，并提供体检检查项和检查组管理的功能，并根据预约的套餐提供热门套餐和会员数量的图表分析的功能
+# 技术栈
+
+> dubbo、zookeeper、redis、mybatis、elementUI、Echarts、springMVC、spring Security、POI
 
 # 模块介绍
 
