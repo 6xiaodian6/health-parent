@@ -29,7 +29,6 @@ public class UserController {
                     getAuthentication().getDetails()).getRemoteAddress();
             log.info("远程访问的地址为" + remoteAddress);
             log.info("已被访问了" + count++ + "次");
-
             String username = user.getUsername();
             return new Result(true, MessageConstant.GET_USERNAME_SUCCESS, username);
         } catch (Exception e) {
