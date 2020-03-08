@@ -7,9 +7,10 @@
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <!-- 这里的useAffectedRows=true是设置获取插入和更新操作 所影响的行数，如果不加返回的行数在mybatis中就会有问题-->
-        <property name="url" value="jdbc:mysql://192.168.67.74:3306/health?useAffectedRows=true"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/health?useAffectedRows=true"/>
+	<!-- 自己的数据库用户名和密码 -->
         <property name="username" value="root"/>
-        <property name="password" value="root"/>
+        <property name="password" value="123456"/>
     </bean>
     <!--spring和mybatis整合工厂-->
     <bean class="org.mybatis.spring.SqlSessionFactoryBean">
