@@ -5,6 +5,7 @@ import com.yd93.pojo.Permission;
 import com.yd93.pojo.Role;
 import com.yd93.pojo.User;
 import com.yd93.service.UserService;
+import org.apache.log4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +26,7 @@ import java.util.Set;
 public class SpringSecurityUserService implements UserDetailsService {
     @Reference
     private UserService userService;
+    private static final Logger log = Logger.getLogger(SpringSecurityUserService.class);
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
